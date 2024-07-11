@@ -15,6 +15,7 @@ class MessageService
          "ERROR-EMPTY-PARAMS" => "Veuillez vérifier vos informations, un des champs est vide !",
          "ERROR" => "Une erreur s'est produite",
          "OK" => "Opération effectuée",
+         "NOT_EXIST" => "Cet élément n'existe pas",
         );
         return $listMessage[$CODEERROR];
     }

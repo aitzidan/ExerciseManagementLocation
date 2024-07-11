@@ -2,10 +2,30 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use App\Controller\CarsController;
 use App\Repository\CarRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: CarRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/cars',
+            controller: CarsController::class,
+            paginationEnabled: false,
+            name: 'get_cars_available',
+        ),
+        new Get(
+            uriTemplate: '/cars/{id}',
+            controller: CarsController::class,
+            paginationEnabled: false,
+            name: 'get_specify_cars',
+        ),
+    ]
+)]
 class Car
 {
     #[ORM\Id]

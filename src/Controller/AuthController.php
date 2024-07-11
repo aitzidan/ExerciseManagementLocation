@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api'  ) ]
+
 class AuthController extends AbstractController
 {
     private $JWTManager;
@@ -28,14 +28,15 @@ class AuthController extends AbstractController
         $this->userRepository = $userRepository;
     }
     
-    #[Route('/authentification', name: 'authentification' , methods:["POST"])]
+    #[Route('/auth' , methods:["POST"])]
     public function index(Request $request): JsonResponse
     {
         $codeStatut="ERROR";
         $respObjects=array();
         try {
-            $email = $request->get("email");
-            $password = $request->get("password");
+            $dataBody = json_decode($request->getContent(), true);
+            $email = $dataBody['email'];
+            $password = $dataBody['password'];
             if (!empty($email) && !empty($password)) {
                 $findUser = $this->userRepository->findUserByEmailAndPass($email , $password);
 

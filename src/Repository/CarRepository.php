@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Car;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,9 +12,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CarRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $em;
+    public function __construct(ManagerRegistry $registry , EntityManagerInterface $em)
     {
         parent::__construct($registry, Car::class);
+        $this->em = $em;
     }
 
 //    /**
@@ -40,4 +43,25 @@ class CarRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getCarsAvailable(): array
+    {
+        $now = new \DateTime();
+
+        $query = $this->em->createQuery(
+            'SELECT c 
+            FROM App\Entity\Car c 
+            WHERE c.id NOT IN (
+                SELECT IDENTITY(r.idCar) 
+                FROM App\Entity\Reservation r 
+                WHERE :now BETWEEN r.dateStart AND r.dateEnd
+            )'
+        )->setParameter('now', $now);
+        return $query->getResult();
+    }
+    
+    public function getOneCar($id): ?Car
+    {
+        $Car = $this->em->getRepository(Car::class)->find($id);
+        return $Car;
+    }
 }
