@@ -41,7 +41,7 @@ class UserRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findUserByEmailAndPass(string $email , string $password): ?User{
-        return $this->findOneBy(["email"=> $email , "password"=>md5($password)]);
+    public function getUser(int $id ): ?User{
+        return $this->find($id);
     }
 }

@@ -4,66 +4,73 @@ namespace App\Controller;
 
 use App\Entity\Car;
 use App\Repository\CarRepository;
+use App\Services\CarService;
 use App\Services\MessageService;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 #[Route('/api')]
 class CarsController extends AbstractController
 {
-    private $carsRepo ;
-    private $MessageService;
+    private $carService;
+    private $messageService;
+    private $jwtManager;
 
     public function __construct(
-        CarRepository $carsRepo , 
-        MessageService $MessageService , 
-    ){
-        $this->carsRepo = $carsRepo;
-        $this->MessageService = $MessageService;
+        CarService $carService,
+        MessageService $messageService,
+        JWTEncoderInterface $jwtManager
+    ) {
+        $this->carService = $carService;
+        $this->messageService = $messageService;
+        $this->jwtManager = $jwtManager;
     }
 
-    #[Route('/cars',name:"get_cars_available")]
-    public function getCarsAvailable(): JsonResponse
+    #[Route('/cars', name: "get_cars_available")]
+    public function getCarsAvailable(Request $request): JsonResponse
     {
-        $respObjects =array();
-        $codeStatut = "ERROR";
-        try{
+        //TODO:Récupération véhicule disponible
 
-            $data = $this->carsRepo->getCarsAvailable();
+        $respObjects = [];
+        $codeStatut = "ERROR";
+        try {
+            $data = $this->carService->getCarsAvailable();
             $codeStatut = "OK";
             $respObjects["data"] = $data;
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $codeStatut = "ERROR";
         }
         $respObjects["codeStatut"] = $codeStatut;
-        $respObjects["message"] = $this->MessageService->getMessage($codeStatut);
+        $respObjects["message"] = $this->messageService->getMessage($codeStatut);
         return $this->json($respObjects);
     }
-    #[Route('/cars/{id}', name:"get_specify_cars")]
-    public function getDetailsCars(EntityManagerInterface $em , $id): JsonResponse
-    {
-        $respObjects =array();
-        $codeStatut = "ERROR";
-        try{
 
-            $Car = $this->carsRepo->getOneCar($id);
-            if($Car){
-                $data = $Car;
+    #[Route('/cars/{id}', name: "get_specify_cars")]
+    public function getDetailsCars($id): JsonResponse
+    {
+        //TODO:Récupération véhicule détails
+        $respObjects = [];
+        $codeStatut = "ERROR";
+        try {
+            $car = $this->carService->getOneCar($id);
+            if ($car) {
+                $data = $car;
                 $codeStatut = "OK";
                 $respObjects["data"] = $data;
-            }else{
+            } else {
                 $codeStatut = "NOT_EXIST";
             }
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $codeStatut = "ERROR";
         }
         $respObjects["codeStatut"] = $codeStatut;
-        $respObjects["message"] = $this->MessageService->getMessage($codeStatut);
+        $respObjects["message"] = $this->messageService->getMessage($codeStatut);
         return $this->json($respObjects);
     }
 }

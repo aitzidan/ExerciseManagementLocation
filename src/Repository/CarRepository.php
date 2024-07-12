@@ -64,4 +64,50 @@ class CarRepository extends ServiceEntityRepository
         $Car = $this->em->getRepository(Car::class)->find($id);
         return $Car;
     }
+    
+    public function checkCarsAvailable($idCar, $dateStart, $dateEnd)
+    {
+        $query = $this->em->createQuery(
+            'SELECT COUNT(r.id) 
+            FROM App\Entity\Reservation r
+            WHERE r.idCar = :idCar
+            AND (
+                (:dateStart BETWEEN r.dateStart AND r.dateEnd) OR 
+                (:dateEnd BETWEEN r.dateStart AND r.dateEnd) OR 
+                (r.dateStart BETWEEN :dateStart AND :dateEnd)
+            )'
+        )
+        ->setParameter('idCar', $idCar)
+        ->setParameter('dateStart', $dateStart)
+        ->setParameter('dateEnd', $dateEnd);
+
+        $result = $query->getSingleScalarResult();
+
+        // If the result is 0, it means no conflicting reservations exist, hence the car is available
+        return $result == 0;
+    }
+    public function checkCarsAvailableForUpdate($idCar, $dateStart, $dateEnd , $idRes)
+    {
+        $query = $this->em->createQuery(
+            'SELECT COUNT(r.id) 
+            FROM App\Entity\Reservation r
+            WHERE r.idCar = :idCar
+            AND (
+                (:dateStart BETWEEN r.dateStart AND r.dateEnd) OR 
+                (:dateEnd BETWEEN r.dateStart AND r.dateEnd) OR 
+                (r.dateStart BETWEEN :dateStart AND :dateEnd)
+            ) 
+            AND r.id != :id
+            '
+        )
+        ->setParameter('idCar', $idCar)
+        ->setParameter('dateStart', $dateStart)
+        ->setParameter('dateEnd', $dateEnd)
+        ->setParameter('id', $idRes);
+
+        $result = $query->getSingleScalarResult();
+
+        return $result == 0;
+    }
+
 }

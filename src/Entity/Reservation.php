@@ -52,6 +52,12 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?Car $idCar = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateCreation = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -100,6 +106,30 @@ class Reservation
     public function setIdCar(?Car $idCar): static
     {
         $this->idCar = $idCar;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(?\DateTimeInterface $dateCreation): static
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->Status;
+    }
+
+    public function setStatus(?string $Status): static
+    {
+        $this->Status = $Status;
 
         return $this;
     }
