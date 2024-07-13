@@ -45,18 +45,8 @@ class CarRepository extends ServiceEntityRepository
 //    }
     public function getCarsAvailable(): array
     {
-        $now = new \DateTime();
-
-        $query = $this->em->createQuery(
-            'SELECT c 
-            FROM App\Entity\Car c 
-            WHERE c.id NOT IN (
-                SELECT IDENTITY(r.idCar) 
-                FROM App\Entity\Reservation r 
-                WHERE :now BETWEEN r.dateStart AND r.dateEnd
-            )'
-        )->setParameter('now', $now);
-        return $query->getResult();
+        $Cars = $this->em->getRepository(Car::class)->findAll();
+        return $Cars;
     }
     
     public function getOneCar($id): ?Car
