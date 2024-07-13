@@ -95,7 +95,6 @@ class ReservationController extends AbstractController
                 if($reservation->getIdUser()->getId() == $idUser){
                     $dateStart = new \DateTime($dataRequest['dateStart']);
                     $dateEnd = new \DateTime($dataRequest['dateEnd']);
-                    $idUser = $dataRequest['idUser'];
                     $idCar = $dataRequest['idCar'];
 
                     //TODO:Vérification disponbilité de véhecule

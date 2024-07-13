@@ -36,7 +36,9 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/cars, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/reservation, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/user, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: PUBLIC_ACCESS }
+        - { path: ^/auth, roles: PUBLIC_ACCESS }
 
 when@test:
     security:
